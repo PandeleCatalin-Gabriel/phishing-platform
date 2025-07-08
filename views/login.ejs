@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>Autentificare</h1>
+            <p class="auth-subtitle">Platformă Educațională de Phishing Awareness</p>
+            
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <form action="/auth/login" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="emailOrUsername">Email sau Username</label>
+                    <input 
+                        type="text" 
+                        id="emailOrUsername" 
+                        name="emailOrUsername" 
+                        required
+                        placeholder="Introduceți email-ul sau username-ul"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Parolă</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required
+                        placeholder="Introduceți parola"
+                    >
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    Autentificare
+                </button>
+            </form>
+            
+            <div class="auth-links">
+                <p>Nu aveți cont? <a href="/auth/register">Înregistrați-vă</a></p>
+            </div>
+            
+            <div class="auth-info">
+                <p>📚 Această platformă este destinată exclusiv scopurilor educaționale</p>
+                <p>🔐 Date implicite admin: admin@example.com / admin123</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

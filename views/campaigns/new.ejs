@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Creare Campanie Nouă</h1>
+            <a href="/campaigns" class="btn btn-secondary">← Înapoi la campanii</a>
+        </div>
+        
+        <div class="form-container">
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <form action="/campaigns/new" method="POST" class="campaign-form">
+                <div class="form-group">
+                    <label for="name">Nume campanie *</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required
+                        placeholder="Ex: Campanie test Q1 2024"
+                        autofocus
+                    >
+                    <small class="form-help">Alegeți un nume descriptiv pentru campanie</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Descriere</label>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        rows="4"
+                        placeholder="Descrieți scopul și obiectivele campaniei..."
+                    ></textarea>
+                    <small class="form-help">Opțional: Adăugați detalii despre campanie</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        🚀 Creează Campanie
+                    </button>
+                    <a href="/campaigns" class="btn btn-secondary">
+                        Anulează
+                    </a>
+                </div>
+            </form>
+            
+            <div class="info-box">
+                <h3>📌 Pași următori după creare:</h3>
+                <ol>
+                    <li>Adăugați un template de email</li>
+                    <li>Importați lista de destinatari</li>
+                    <li>Configurați setările de tracking</li>
+                    <li>Lansați campania</li>
+                </ol>
+            </div>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

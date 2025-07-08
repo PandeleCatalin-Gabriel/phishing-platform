@@ -1,0 +1,25 @@
+<header class="main-header">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>PhishEdu Platform</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+            <li><a href="/campaigns" class="nav-link">Campanii</a></li>
+            <li><a href="/templates" class="nav-link">Template-uri</a></li>
+            <li><a href="/targets" class="nav-link">Ținte</a></li>
+            <li><a href="/reports" class="nav-link">Rapoarte</a></li>
+        </ul>
+        
+        <div class="nav-user">
+            <span class="user-info">
+                👤 <%= user.username %>
+                <% if (user.role === 'admin') { %>
+                    <span class="badge admin">Admin</span>
+                <% } %>
+            </span>
+            <a href="/auth/logout" class="btn btn-logout">Logout</a>
+        </div>
+    </nav>
+</header>

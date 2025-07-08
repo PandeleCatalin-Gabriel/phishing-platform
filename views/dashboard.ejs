@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+    
+    <main class="main-content">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h2>Bun venit, <%= user.username %>!</h2>
+                <p>Dashboard-ul tău de campanii phishing educaționale</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-content">
+                        <h3><%= stats.totalCampaigns %></h3>
+                        <p>Campanii totale</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-content">
+                        <h3><%= stats.totalTemplates %></h3>
+                        <p>Template-uri</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">✉️</div>
+                    <div class="stat-content">
+                        <h3><%= stats.totalEmailsSent %></h3>
+                        <p>Email-uri trimise</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <h3>0%</h3>
+                        <p>Rata de click</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-sections">
+                <section class="dashboard-section">
+                    <div class="section-header">
+                        <h3>Campanii recente</h3>
+                        <a href="/campaigns/new" class="btn btn-primary">+ Campanie nouă</a>
+                    </div>
+                    
+                    <% if (recentCampaigns.length > 0) { %>
+                        <div class="campaigns-list">
+                            <% recentCampaigns.forEach(campaign => { %>
+                                <div class="campaign-item">
+                                    <h4><%= campaign.name %></h4>
+                                    <p><%= campaign.description || 'Fără descriere' %></p>
+                                    <div class="campaign-meta">
+                                        <span class="status status-<%= campaign.status %>">
+                                            <%= campaign.status %>
+                                        </span>
+                                        <span class="date">
+                                            <%= new Date(campaign.created_at).toLocaleDateString('ro-RO') %>
+                                        </span>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <p>Nu aveți campanii încă.</p>
+                            <a href="/campaigns/new" class="btn btn-secondary">Creați prima campanie</a>
+                        </div>
+                    <% } %>
+                </section>
+                
+                <section class="dashboard-section">
+                    <h3>Acțiuni rapide</h3>
+                    <div class="quick-actions">
+                        <a href="/campaigns/new" class="action-card">
+                            <div class="action-icon">🚀</div>
+                            <h4>Campanie nouă</h4>
+                            <p>Lansați o nouă campanie de phishing educațional</p>
+                        </a>
+                        
+                        <a href="/templates/new" class="action-card">
+                            <div class="action-icon">✉️</div>
+                            <h4>Template nou</h4>
+                            <p>Creați un template de email personalizat</p>
+                        </a>
+                        
+                        <a href="/targets/import" class="action-card">
+                            <div class="action-icon">👥</div>
+                            <h4>Import ținte</h4>
+                            <p>Importați lista de destinatari din CSV</p>
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

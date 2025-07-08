@@ -1,0 +1,11 @@
+<!-- views/error.ejs -->
+<%- include('layouts/main', { body: `
+<div class="error-page">
+    <h1>Eroare</h1>
+    <h2>${message || 'A apărut o eroare'}</h2>
+    <% if (error && process.env.NODE_ENV === 'development') { %>
+        <pre class="error-details">${error.stack}</pre>
+    <% } %>
+    <a href="/dashboard" class="btn btn-primary">Înapoi la Dashboard</a>
+</div>
+` }) %>
