@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Editare Template</h1>
+            <a href="/templates/<%= template.id %>" class="btn btn-secondary">← Înapoi</a>
+        </div>
+        
+        <div class="form-container">
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <form action="/templates/<%= template.id %>/edit" method="POST" class="template-form">
+                <div class="form-group">
+                    <label for="name">Nume template *</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        value="<%= template.name %>"
+                        required
+                        autofocus
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subiect email *</label>
+                    <input 
+                        type="text" 
+                        id="subject" 
+                        name="subject" 
+                        value="<%= template.subject %>"
+                        required
+                    >
+                    <small class="form-help">Variabile disponibile: {{first_name}}, {{last_name}}, {{email}}, {{company}}</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="html_content">Conținut HTML *</label>
+                    <textarea 
+                        id="html_content" 
+                        name="html_content" 
+                        rows="15"
+                        required
+                    ><%= template.html_content %></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="text_content">Conținut text (opțional)</label>
+                    <textarea 
+                        id="text_content" 
+                        name="text_content" 
+                        rows="10"
+                    ><%= template.text_content %></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        💾 Salvează modificările
+                    </button>
+                    <button type="button" onclick="previewTemplate()" class="btn btn-secondary">
+                        👁️ Preview
+                    </button>
+                    <a href="/templates/<%= template.id %>" class="btn btn-secondary">
+                        Anulează
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        function previewTemplate() {
+            const htmlContent = document.getElementById('html_content').value;
+            const previewWindow = window.open('', 'preview', 'width=800,height=600');
+            previewWindow.document.write(htmlContent);
+            previewWindow.document.close();
+        }
+    </script>
+</body>
+</html>

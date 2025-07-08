@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Rapoarte și Analize</h1>
+        </div>
+        
+        <!-- Statistici generale -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <h3><%= stats.totalCampaigns %></h3>
+                    <p>Campanii totale</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🚀</div>
+                <div class="stat-content">
+                    <h3><%= stats.activeCampaigns %></h3>
+                    <p>Campanii active</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <h3><%= stats.completedCampaigns %></h3>
+                    <p>Campanii finalizate</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <h3><%= stats.totalTargets %></h3>
+                    <p>Total ținte</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">✉️</div>
+                <div class="stat-content">
+                    <h3><%= stats.totalSent %></h3>
+                    <p>Email-uri trimise</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📧</div>
+                <div class="stat-content">
+                    <h3><%= stats.openRate %>%</h3>
+                    <p>Rată deschidere</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-content">
+                    <h3><%= stats.clickRate %>%</h3>
+                    <p>Rată click</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-content">
+                    <h3><%= stats.totalClicked %></h3>
+                    <p>Utilizatori vulnerabili</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="report-sections">
+            <!-- Performanța campaniilor -->
+            <section class="report-section">
+                <h2>Performanța campaniilor</h2>
+                <% if (campaignStats.length > 0) { %>
+                    <div class="campaigns-performance">
+                        <table class="performance-table">
+                            <thead>
+                                <tr>
+                                    <th>Campanie</th>
+                                    <th>Status</th>
+                                    <th>Ținte</th>
+                                    <th>Trimise</th>
+                                    <th>Deschise</th>
+                                    <th>Click-uri</th>
+                                    <th>Acțiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% campaignStats.forEach(campaign => { %>
+                                    <tr>
+                                        <td><%= campaign.name %></td>
+                                        <td>
+                                            <span class="status status-<%= campaign.status %>">
+                                                <%= campaign.status %>
+                                            </span>
+                                        </td>
+                                        <td><%= campaign.totalTargets %></td>
+                                        <td><%= campaign.emailsSent %></td>
+                                        <td><%= campaign.openRate %>%</td>
+                                        <td><%= campaign.clickRate %>%</td>
+                                        <td>
+                                            <a href="/reports/campaign/<%= campaign.id %>" class="btn btn-sm">
+                                                Vezi raport
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <p class="no-data">Nu există date de afișat</p>
+                <% } %>
+            </section>
+            
+            <!-- Evenimente recente -->
+            <section class="report-section">
+                <h2>Activitate recentă</h2>
+                <% if (recentEvents.length > 0) { %>
+                    <div class="recent-events">
+                        <% recentEvents.forEach(event => { %>
+                            <div class="event-item">
+                                <span class="event-icon">
+                                    <%= event.event_type === 'open' ? '📧' : '🎯' %>
+                                </span>
+                                <span class="event-details">
+                                    <strong><%= event.email %></strong> 
+                                    <%= event.event_type === 'open' ? 'a deschis email-ul' : 'a dat click pe link' %>
+                                    din campania "<%= event.campaign_name %>"
+                                </span>
+                                <span class="event-time">
+                                    <%= new Date(event.timestamp).toLocaleString('ro-RO') %>
+                                </span>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <p class="no-data">Nu există activitate recentă</p>
+                <% } %>
+            </section>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

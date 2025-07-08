@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1><%= campaign.name %></h1>
+                <p class="text-secondary"><%= campaign.description || 'Fără descriere' %></p>
+            </div>
+            <div class="header-actions">
+                <span class="status status-<%= campaign.status %>">
+                    <%= campaign.status %>
+                </span>
+                <% if (campaign.status === 'draft') { %>
+                    <a href="/campaigns/<%= campaign.id %>/edit" class="btn btn-secondary">Editează</a>
+                    <button onclick="launchCampaign(<%= campaign.id %>)" class="btn btn-primary">🚀 Lansează</button>
+                <% } %>
+            </div>
+        </div>
+        
+        <!-- Statistici campanie -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <h3><%= stats.totalTargets %></h3>
+                    <p>Ținte totale</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✉️</div>
+                <div class="stat-content">
+                    <h3><%= stats.emailsSent %></h3>
+                    <p>Email-uri trimise</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📧</div>
+                <div class="stat-content">
+                    <h3><%= stats.openRate %>%</h3>
+                    <p>Rată deschidere</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-content">
+                    <h3><%= stats.clickRate %>%</h3>
+                    <p>Rată click</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="campaign-sections">
+            <!-- Secțiune Template -->
+            <section class="campaign-section">
+                <h2>Template Email</h2>
+                <div class="empty-section">
+                    <p>Niciun template selectat</p>
+                    <a href="/templates/new?campaign=<%= campaign.id %>" class="btn btn-secondary">
+                        Adaugă template
+                    </a>
+                </div>
+            </section>
+            
+            <!-- Secțiune Ținte -->
+            <section class="campaign-section">
+                <h2>Listă destinatari</h2>
+                <div class="empty-section">
+                    <p>Nicio țintă adăugată</p>
+                    <a href="/targets/import?campaign=<%= campaign.id %>" class="btn btn-secondary">
+                        Import ținte
+                    </a>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Timeline simplificat -->
+        <section class="timeline-section">
+            <h2>Istoric activitate</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        Creat la: <%= new Date(campaign.created_at).toLocaleDateString('ro-RO') %>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <% if (campaign.status === 'draft') { %>
+            <div class="danger-zone">
+                <h3>Zona periculoasă</h3>
+                <button onclick="deleteCampaign(<%= campaign.id %>)" class="btn btn-danger">
+                    🗑️ Șterge campania
+                </button>
+            </div>
+        <% } %>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        function launchCampaign(id) {
+            if (!confirm('Sigur vrei să lansezi campania?')) {
+                return;
+            }
+            
+            fetch('/campaigns/' + id + '/launch', {
+                method: 'POST'
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    alert('Campanie lansată cu succes!');
+                    location.reload();
+                } else {
+                    alert('Eroare: ' + data.error);
+                }
+            });
+        }
+        
+        function deleteCampaign(id) {
+            if (!confirm('Sigur vrei să ștergi această campanie?')) {
+                return;
+            }
+            
+            fetch('/campaigns/' + id, {
+                method: 'DELETE'
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    alert('Campanie ștearsă!');
+                    window.location.href = '/campaigns';
+                } else {
+                    alert('Eroare: ' + data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

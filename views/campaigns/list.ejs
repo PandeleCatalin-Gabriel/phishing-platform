@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Campaniile mele</h1>
+            <a href="/campaigns/new" class="btn btn-primary">+ Campanie nouă</a>
+        </div>
+        
+        <% if (campaigns.length > 0) { %>
+            <div class="campaigns-grid">
+                <% campaigns.forEach(campaign => { %>
+                    <div class="campaign-card">
+                        <div class="campaign-card-header">
+                            <h3><a href="/campaigns/<%= campaign.id %>"><%= campaign.name %></a></h3>
+                            <span class="status status-<%= campaign.status %>">
+                                <%= campaign.status %>
+                            </span>
+                        </div>
+                        
+                        <p class="campaign-description">
+                            <%= campaign.description || 'Fără descriere' %>
+                        </p>
+                        
+                        <div class="campaign-stats">
+                            <div class="stat-mini">
+                                <span class="stat-label">Ținte:</span>
+                                <span class="stat-value">0</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-label">Trimise:</span>
+                                <span class="stat-value">0</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-label">Deschise:</span>
+                                <span class="stat-value">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="campaign-actions">
+                            <a href="/campaigns/<%= campaign.id %>" class="btn btn-sm">Vezi detalii</a>
+                            <% if (campaign.status === 'draft') { %>
+                                <a href="/campaigns/<%= campaign.id %>/edit" class="btn btn-sm">Editează</a>
+                            <% } %>
+                        </div>
+                        
+                        <div class="campaign-date">
+                            Creat: <%= new Date(campaign.created_at).toLocaleDateString('ro-RO') %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state-large">
+                <div class="empty-icon">📧</div>
+                <h2>Nu aveți campanii încă</h2>
+                <p>Creați prima campanie pentru a începe testarea phishing awareness</p>
+                <a href="/campaigns/new" class="btn btn-primary">Creează prima campanie</a>
+            </div>
+        <% } %>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

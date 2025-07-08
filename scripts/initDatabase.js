@@ -72,6 +72,7 @@ const initDatabase = async () => {
             sent_at DATETIME,
             opened_at DATETIME,
             clicked_at DATETIME,
+            tracking_id TEXT UNIQUE,
             FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
         )
     `, (err) => {

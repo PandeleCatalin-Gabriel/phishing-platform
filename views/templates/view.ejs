@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1><%= template.name %></h1>
+                <p class="text-secondary">Subiect: <%= template.subject %></p>
+            </div>
+            <div class="header-actions">
+                <a href="/templates/<%= template.id %>/edit" class="btn btn-secondary">Editează</a>
+                <a href="/templates/<%= template.id %>/preview" target="_blank" class="btn btn-primary">👁️ Preview</a>
+            </div>
+        </div>
+        
+        <div class="template-details">
+            <section class="template-section">
+                <h2>Variabile disponibile</h2>
+                <div class="variables-list">
+                    <code>{{first_name}}</code> - Prenumele destinatarului<br>
+                    <code>{{last_name}}</code> - Numele destinatarului<br>
+                    <code>{{email}}</code> - Email-ul destinatarului<br>
+                    <code>{{company}}</code> - Compania destinatarului<br>
+                    <code>{{link}}</code> - Link-ul de tracking
+                </div>
+            </section>
+            
+            <section class="template-section">
+                <h2>Conținut HTML</h2>
+                <div class="code-preview">
+                    <pre><code><%- template.html_content.replace(/</g, '&lt;').replace(/>/g, '&gt;') %></code></pre>
+                </div>
+            </section>
+            
+            <% if (template.text_content) { %>
+                <section class="template-section">
+                    <h2>Conținut Text</h2>
+                    <div class="text-preview">
+                        <pre><%= template.text_content %></pre>
+                    </div>
+                </section>
+            <% } %>
+            
+            <section class="template-section">
+                <h2>Informații</h2>
+                <div class="info-grid">
+                    <div>
+                        <strong>Creat:</strong> <%= new Date(template.created_at).toLocaleDateString('ro-RO') %>
+                    </div>
+                    <div>
+                        <strong>Ultima actualizare:</strong> <%= new Date(template.updated_at).toLocaleDateString('ro-RO') %>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="danger-zone">
+            <h3>Zona periculoasă</h3>
+            <button onclick="deleteTemplate(<%= template.id %>)" class="btn btn-danger">
+                🗑️ Șterge template-ul
+            </button>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        function deleteTemplate(id) {
+            if (!confirm('Sigur vrei să ștergi acest template?')) {
+                return;
+            }
+            
+            fetch('/templates/' + id, {
+                method: 'DELETE'
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    alert('Template șters!');
+                    window.location.href = '/templates';
+                } else {
+                    alert('Eroare: ' + data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

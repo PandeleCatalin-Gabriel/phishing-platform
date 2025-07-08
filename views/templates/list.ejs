@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Template-uri Email</h1>
+            <a href="/templates/new" class="btn btn-primary">+ Template nou</a>
+        </div>
+        
+        <% if (templates.length > 0) { %>
+            <div class="templates-grid">
+                <% templates.forEach(template => { %>
+                    <div class="template-card">
+                        <div class="template-card-header">
+                            <h3><a href="/templates/<%= template.id %>"><%= template.name %></a></h3>
+                        </div>
+                        
+                        <div class="template-subject">
+                            <strong>Subiect:</strong> <%= template.subject %>
+                        </div>
+                        
+                        <div class="template-preview">
+                            <%= template.html_content.replace(/<[^>]*>/g, '').substring(0, 150) %>...
+                        </div>
+                        
+                        <div class="template-actions">
+                            <a href="/templates/<%= template.id %>" class="btn btn-sm">Vezi detalii</a>
+                            <a href="/templates/<%= template.id %>/edit" class="btn btn-sm">Editează</a>
+                            <a href="/templates/<%= template.id %>/preview" target="_blank" class="btn btn-sm">Preview</a>
+                        </div>
+                        
+                        <div class="template-date">
+                            Actualizat: <%= new Date(template.updated_at).toLocaleDateString('ro-RO') %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state-large">
+                <div class="empty-icon">✉️</div>
+                <h2>Nu aveți template-uri încă</h2>
+                <p>Creați primul template de email pentru campaniile dvs.</p>
+                <a href="/templates/new" class="btn btn-primary">Creează primul template</a>
+            </div>
+        <% } %>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

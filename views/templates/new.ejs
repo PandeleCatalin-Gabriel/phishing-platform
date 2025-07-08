@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Creare Template Email</h1>
+            <a href="/templates" class="btn btn-secondary">← Înapoi la template-uri</a>
+        </div>
+        
+        <div class="form-container">
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <form action="/templates/new" method="POST" class="template-form">
+                <% if (campaignId) { %>
+                    <input type="hidden" name="campaignId" value="<%= campaignId %>">
+                <% } %>
+                
+                <div class="form-group">
+                    <label for="name">Nume template *</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required
+                        placeholder="Ex: Template phishing bancă"
+                        autofocus
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subiect email *</label>
+                    <input 
+                        type="text" 
+                        id="subject" 
+                        name="subject" 
+                        required
+                        placeholder="Ex: Actualizare urgentă cont"
+                    >
+                    <small class="form-help">Variabile disponibile: {{first_name}}, {{last_name}}, {{email}}, {{company}}</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="html_content">Conținut HTML *</label>
+                    <textarea 
+                        id="html_content" 
+                        name="html_content" 
+                        rows="15"
+                        required
+                        placeholder="Introduceți conținutul HTML al email-ului..."
+                    ><html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f0f0f0; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Titlu Email</h1>
+        </div>
+        <div class="content">
+            <p>Bună {{first_name}},</p>
+            <p>Acesta este un template de test pentru campania de phishing educațional.</p>
+            <p><a href="{{link}}" class="button">Click aici</a></p>
+            <p>Cu stimă,<br>Echipa IT</p>
+        </div>
+    </div>
+</body>
+</html></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="text_content">Conținut text (opțional)</label>
+                    <textarea 
+                        id="text_content" 
+                        name="text_content" 
+                        rows="10"
+                        placeholder="Versiunea text a email-ului pentru clienții care nu suportă HTML..."
+                    ></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        💾 Salvează template
+                    </button>
+                    <button type="button" onclick="previewTemplate()" class="btn btn-secondary">
+                        👁️ Preview
+                    </button>
+                    <a href="/templates" class="btn btn-secondary">
+                        Anulează
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        function previewTemplate() {
+            const htmlContent = document.getElementById('html_content').value;
+            const previewWindow = window.open('', 'preview', 'width=800,height=600');
+            previewWindow.document.write(htmlContent);
+            previewWindow.document.close();
+        }
+    </script>
+</body>
+</html>

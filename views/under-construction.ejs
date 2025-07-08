@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+    
+    <main class="main-content">
+        <div class="under-construction">
+            <div class="construction-icon">🚧</div>
+            <h1><%= section %></h1>
+            <h2>În construcție</h2>
+            <p><%= message %></p>
+            <a href="/dashboard" class="btn btn-primary">Înapoi la Dashboard</a>
+        </div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>
