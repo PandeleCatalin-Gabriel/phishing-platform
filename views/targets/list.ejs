@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Ținte pentru: <%= campaign.name %></h1>
+            <div class="header-actions">
+                <a href="/targets/add?campaign=<%= campaign.id %>" class="btn btn-primary">➕ Adaugă Țintă Nouă</a>
+                <a href="/campaigns/<%= campaign.id %>" class="btn btn-secondary">← Înapoi la campanie</a>
+            </div>
+        </div>
+        
+        <% if (targets.length > 0) { %>
+            <div class="targets-stats">
+                <div class="stat-mini">
+                    <span class="stat-label">Total ținte:</span>
+                    <span class="stat-value"><%= targets.length %></span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-label">Email-uri trimise:</span>
+                    <span class="stat-value"><%= targets.filter(t => t.sent_at).length %></span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-label">Deschise:</span>
+                    <span class="stat-value"><%= targets.filter(t => t.opened_at).length %></span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-label">Click-uri:</span>
+                    <span class="stat-value"><%= targets.filter(t => t.clicked_at).length %></span>
+                </div>
+            </div>
+            
+            <div class="targets-table-container">
+                <table class="targets-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Nume</th>
+                            <th>Poziție</th>
+                            <th>Companie</th>
+                            <th>Status</th>
+                            <th>Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% targets.forEach(target => { %>
+                            <tr>
+                                <td><%= target.email %></td>
+                                <td><%= target.first_name %> <%= target.last_name %></td>
+                                <td><%= target.position || '-' %></td>
+                                <td><%= target.company || '-' %></td>
+                                <td>
+                                    <span class="status status-<%= target.status %>">
+                                        <% if (target.clicked_at) { %>
+                                            🎯 Click
+                                        <% } else if (target.opened_at) { %>
+                                            📧 Deschis
+                                        <% } else if (target.sent_at) { %>
+                                            ✉️ Trimis
+                                        <% } else { %>
+                                            ⏳ În așteptare
+                                        <% } %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button onclick="removeTarget(<%= target.id %>)" class="btn btn-sm btn-danger">
+                                        🗑️
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="empty-state-large">
+                <div class="empty-icon">👥</div>
+                <h2>Nu există ținte pentru această campanie</h2>
+                <p>Adaugă ținte pentru a putea trimite email-uri</p>
+                <a href="/targets/add?campaign=<%= campaign.id %>" class="btn btn-primary">➕ Adaugă Prima Țintă</a>
+            </div>
+        <% } %>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script>
+        function removeTarget(id) {
+            if (!confirm('Sigur vrei să ștergi această țintă?')) {
+                return;
+            }
+            
+            fetch('/targets/' + id, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Eroare: ' + data.error);
+                }
+            });
+        }
+    </script>
+    
+    <style>
+        .targets-stats {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-mini {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+    </style>
+</body>
+</html>

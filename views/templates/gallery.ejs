@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alege Template - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Alege un Template</h1>
+            <a href="/templates" class="btn btn-secondary">← Vezi toate template-urile</a>
+        </div>
+        
+        <div class="template-categories">
+            <h2>🌐 Rețele Sociale</h2>
+            <div class="template-grid">
+                <div class="template-card">
+                    <div class="template-preview instagram">
+                        <img src="/images/instagram-logo.png" alt="Instagram">
+                    </div>
+                    <h3>Instagram Login</h3>
+                    <p>Pagină de autentificare Instagram</p>
+                    <a href="/templates/create-preset?type=instagram<%= campaignId ? '&campaign=' + campaignId : '' %>" class="btn btn-primary">
+                        Folosește acest template
+                    </a>
+                </div>
+                
+                <div class="template-card">
+                    <div class="template-preview facebook">
+                        <img src="/images/facebook-logo.png" alt="Facebook">
+                    </div>
+                    <h3>Facebook Login</h3>
+                    <p>Pagină de autentificare Facebook</p>
+                    <a href="/templates/create-preset?type=facebook<%= campaignId ? '&campaign=' + campaignId : '' %>" class="btn btn-primary">
+                        Folosește acest template
+                    </a>
+                </div>
+                
+                <div class="template-card">
+                    <div class="template-preview linkedin">
+                        <img src="/images/linkedin-logo.png" alt="LinkedIn">
+                    </div>
+                    <h3>LinkedIn Login</h3>
+                    <p>Pagină de autentificare LinkedIn</p>
+                    <a href="/templates/create-preset?type=linkedin<%= campaignId ? '&campaign=' + campaignId : '' %>" class="btn btn-primary">
+                        Folosește acest template
+                    </a>
+                </div>
+            </div>
+            
+            <h2>💼 Business & Email</h2>
+            <div class="template-grid">
+                <div class="template-card">
+                    <div class="template-preview outlook">
+                        <img src="/images/outlook-logo.png" alt="Outlook">
+                    </div>
+                    <h3>Outlook Web</h3>
+                    <p>Pagină de login Outlook/Office 365</p>
+                    <a href="/templates/create-preset?type=outlook<%= campaignId ? '&campaign=' + campaignId : '' %>" class="btn btn-primary">
+                        Folosește acest template
+                    </a>
+                </div>
+                
+                <div class="template-card">
+                    <div class="template-preview gmail">
+                        <img src="/images/gmail-logo.png" alt="Gmail">
+                    </div>
+                    <h3>Gmail Login</h3>
+                    <p>Pagină de autentificare Google</p>
+                    <a href="/templates/create-preset?type=gmail<%= campaignId ? '&campaign=' + campaignId : '' %>" class="btn btn-primary">
+                        Folosește acest template
+                    </a>
+                </div>
+            </div>
+            
+            <h2>🏦 Servicii Bancare</h2>
+            <div class="template-grid">
+                <div class="template-card">
+                    <div class="template-preview bank">
+                        <img src="/images/bank-logo.png" alt="Banking">
+                    </div>
+                    <h3>Generic Bank</h3>
+                    <p>Pagină generică bancară</p>
+                    <a href="/templates/create-preset?type=bank<%= campaignId ? '&campaign=' + campaignId : '' %>" class="btn btn-primary">
+                        Folosește acest template
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="custom-template-section">
+            <h2>✏️ Sau creează propriul template</h2>
+            <a href="/templates/new<%= campaignId ? '?campaign=' + campaignId : '' %>" class="btn btn-secondary">
+                Creează template personalizat
+            </a>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <style>
+        .template-categories {
+            margin: 2rem 0;
+        }
+        
+        .template-categories h2 {
+            margin: 2rem 0 1rem 0;
+            color: var(--text-primary);
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .template-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .template-preview {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .template-preview.instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+        
+        .template-preview.facebook {
+            background: #1877f2;
+        }
+        
+        .template-preview.linkedin {
+            background: #0077b5;
+        }
+        
+        .template-preview.outlook {
+            background: #0078d4;
+        }
+        
+        .template-preview.gmail {
+            background: #ea4335;
+        }
+        
+        .template-preview.bank {
+            background: #2c3e50;
+        }
+        
+        .template-preview img {
+            width: 80px;
+            height: 80px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .custom-template-section {
+            text-align: center;
+            padding: 3rem;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-top: 3rem;
+        }
+    </style>
+</body>
+</html>

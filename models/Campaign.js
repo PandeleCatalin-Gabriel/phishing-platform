@@ -6,6 +6,8 @@ class Campaign {
         this.user_id = data.user_id;
         this.name = data.name;
         this.description = data.description;
+        this.template_id = data.template_id;
+        this.frequency = data.frequency || 30; // minute
         this.status = data.status || 'draft';
         this.created_at = data.created_at;
         this.launched_at = data.launched_at;

@@ -9,6 +9,12 @@ router.use(requireAuth);
 // Listare template-uri
 router.get('/', templateController.listTemplates);
 
+// Galerie template-uri predefinite
+router.get('/gallery', templateController.showGallery);
+
+// Creare template din preset
+router.get('/create-preset', templateController.createFromPreset);
+
 // Formular template nou
 router.get('/new', templateController.showNewTemplateForm);
 

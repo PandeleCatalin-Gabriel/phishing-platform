@@ -19,9 +19,17 @@
                 <span class="status status-<%= campaign.status %>">
                     <%= campaign.status %>
                 </span>
-                <% if (campaign.status === 'draft') { %>
+                <% if (campaign.status === 'draft' && stats.totalTargets > 0) { %>
+                    <button onclick="launchCampaign(<%= campaign.id %>)" class="btn btn-success">
+                        ▶️ Pornește Campania
+                    </button>
                     <a href="/campaigns/<%= campaign.id %>/edit" class="btn btn-secondary">Editează</a>
-                    <button onclick="launchCampaign(<%= campaign.id %>)" class="btn btn-primary">🚀 Lansează</button>
+                <% } else if (campaign.status === 'active') { %>
+                    <button onclick="stopCampaign(<%= campaign.id %>)" class="btn btn-danger">
+                        ⏹️ Oprește Campania
+                    </button>
+                <% } else if (campaign.status === 'draft') { %>
+                    <a href="/campaigns/<%= campaign.id %>/edit" class="btn btn-secondary">Editează</a>
                 <% } %>
             </div>
         </div>
@@ -65,23 +73,49 @@
             <!-- Secțiune Template -->
             <section class="campaign-section">
                 <h2>Template Email</h2>
-                <div class="empty-section">
-                    <p>Niciun template selectat</p>
-                    <a href="/templates/new?campaign=<%= campaign.id %>" class="btn btn-secondary">
-                        Adaugă template
-                    </a>
-                </div>
+                <% if (campaign.template_id) { %>
+                    <div class="template-selected">
+                        <div class="template-info">
+                            <h4>📧 <%= campaign.template_name || 'Instagram Login' %></h4>
+                            <p>Template selectat și gata de utilizare</p>
+                        </div>
+                        <button onclick="changeTemplate(<%= campaign.id %>)" class="btn btn-secondary">
+                            Schimbă Template
+                        </button>
+                    </div>
+                <% } else { %>
+                    <div class="empty-section">
+                        <p>Niciun template selectat</p>
+                        <button onclick="selectTemplate(<%= campaign.id %>)" class="btn btn-primary">
+                            Alege Template
+                        </button>
+                    </div>
+                <% } %>
             </section>
             
             <!-- Secțiune Ținte -->
             <section class="campaign-section">
                 <h2>Listă destinatari</h2>
-                <div class="empty-section">
-                    <p>Nicio țintă adăugată</p>
-                    <a href="/targets/import?campaign=<%= campaign.id %>" class="btn btn-secondary">
-                        Import ținte
-                    </a>
-                </div>
+                <% if (stats.totalTargets > 0) { %>
+                    <div class="targets-info">
+                        <p><strong><%= stats.totalTargets %></strong> destinatari adăugați</p>
+                        <div class="targets-actions">
+                            <a href="/targets/campaign/<%= campaign.id %>" class="btn btn-secondary">
+                                Vezi lista
+                            </a>
+                            <a href="/targets/add?campaign=<%= campaign.id %>" class="btn btn-primary">
+                                + Adaugă țintă
+                            </a>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="empty-section">
+                        <p>Nicio țintă adăugată</p>
+                        <a href="/targets/add?campaign=<%= campaign.id %>" class="btn btn-primary">
+                            + Adaugă prima țintă
+                        </a>
+                    </div>
+                <% } %>
             </section>
         </div>
         
@@ -111,18 +145,62 @@
     
     <script src="/js/main.js"></script>
     <script>
+        function selectTemplate(campaignId) {
+            window.location.href = '/campaigns/' + campaignId + '/select-template';
+        }
+        
+        function changeTemplate(campaignId) {
+            window.location.href = '/campaigns/' + campaignId + '/select-template';
+        }
+        
         function launchCampaign(id) {
-            if (!confirm('Sigur vrei să lansezi campania?')) {
+            // Prompt pentru frecvență
+            const frequency = prompt('La câte minute să se trimită email-urile?\n(Minim 1 minut, recomandat 30+ minute)', '30');
+            
+            if (!frequency) {
+                return;
+            }
+            
+            const freq = parseInt(frequency);
+            if (isNaN(freq) || freq < 1) {
+                alert('Frecvența trebuie să fie cel puțin 1 minut!');
+                return;
+            }
+            
+            if (!confirm(`Campania va trimite email-uri la fiecare ${freq} minute.\nContinuați?`)) {
                 return;
             }
             
             fetch('/campaigns/' + id + '/launch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ frequency: freq })
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    alert('Campanie pornită cu succes! Email-urile vor fi trimise.');
+                    location.reload();
+                } else {
+                    alert('Eroare: ' + data.error);
+                }
+            });
+        }
+        
+        function stopCampaign(id) {
+            if (!confirm('Sigur vrei să oprești campania?')) {
+                return;
+            }
+            
+            fetch('/campaigns/' + id + '/stop', {
                 method: 'POST'
             })
             .then(function(res) { return res.json(); })
             .then(function(data) {
                 if (data.success) {
-                    alert('Campanie lansată cu succes!');
+                    alert('Campanie oprită!');
                     location.reload();
                 } else {
                     alert('Eroare: ' + data.error);

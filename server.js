@@ -33,7 +33,28 @@ try {
 }
 
 // Tracking routes (nu necesită autentificare)
-const trackingRoutes = require('./routes/tracking');
+let trackingRoutes;
+try {
+    trackingRoutes = require('./routes/tracking');
+} catch (error) {
+    console.warn('⚠️ Modulul tracking nu a fost găsit.');
+}
+
+// Verifică dacă există modulul targets
+let targetsRoutes;
+try {
+    targetsRoutes = require('./routes/targets');
+} catch (error) {
+    console.warn('⚠️ Modulul targets nu a fost găsit.');
+}
+
+// Verifică dacă există modulul reports
+let reportsRoutes;
+try {
+    reportsRoutes = require('./routes/reports');
+} catch (error) {
+    console.warn('⚠️ Modulul reports nu a fost găsit.');
+}
 
 // Inițializare aplicație
 const app = express();
@@ -66,7 +87,9 @@ app.get('/', (req, res) => {
 });
 
 // Montare rute publice (fără autentificare)
-app.use('/track', trackingRoutes);
+if (trackingRoutes) {
+    app.use('/track', trackingRoutes);
+}
 
 // Montare rute
 app.use('/auth', authRoutes);
@@ -81,47 +104,26 @@ if (campaignsRoutes) {
 // Montare rute templates dacă există
 if (templatesRoutes) {
     app.use('/templates', templatesRoutes);
-} else {
-    // Rute temporare pentru templates
-    app.get('/templates', requireAuth, (req, res) => {
-        res.render('under-construction', {
-            title: 'Template-uri',
-            section: 'Template-uri Email',
-            message: 'Această secțiune va permite crearea și gestionarea template-urilor de email.'
-        });
-    });
-
-    app.get('/templates/new', requireAuth, (req, res) => {
-        res.render('under-construction', {
-            title: 'Template nou',
-            section: 'Creare Template',
-            message: 'Aici veți putea crea template-uri de email personalizate.'
-        });
-    });
 }
 
+// Montare rute targets dacă există
+if (targetsRoutes) {
+    app.use('/targets', targetsRoutes);
+}
+
+// Montare rute reports dacă există
+if (reportsRoutes) {
+    app.use('/reports', reportsRoutes);
+}
+
+// Rute temporare pentru secțiunile care nu au rute dedicate
+app.get('/campaigns/:id/targets', requireAuth, (req, res) => {
+    res.redirect(`/targets/campaign/${req.params.id}`);
+});
+
+// Redirecționare pentru /targets
 app.get('/targets', requireAuth, (req, res) => {
-    res.render('under-construction', {
-        title: 'Ținte',
-        section: 'Gestionare Ținte',
-        message: 'Această secțiune va permite importul și gestionarea listelor de destinatari.'
-    });
-});
-
-app.get('/targets/import', requireAuth, (req, res) => {
-    res.render('under-construction', {
-        title: 'Import ținte',
-        section: 'Import Destinatari',
-        message: 'Aici veți putea importa liste de destinatari din fișiere CSV.'
-    });
-});
-
-app.get('/reports', requireAuth, (req, res) => {
-    res.render('under-construction', {
-        title: 'Rapoarte',
-        section: 'Rapoarte și Analize',
-        message: 'Această secțiune va oferi rapoarte detaliate despre campaniile dvs.'
-    });
+    res.redirect('/targets/import');
 });
 
 // Fallback pentru campaigns dacă modulul nu există

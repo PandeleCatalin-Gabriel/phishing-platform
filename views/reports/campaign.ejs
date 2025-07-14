@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Raport: <%= campaign.name %></h1>
+            <div class="header-actions">
+                <a href="/campaigns/<%= campaign.id %>" class="btn btn-secondary">Vezi campanie</a>
+                <a href="/reports" class="btn btn-secondary">← Înapoi la rapoarte</a>
+            </div>
+        </div>
+        
+        <!-- Statistici generale campanie -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <h3><%= stats.totalTargets %></h3>
+                    <p>Ținte totale</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✉️</div>
+                <div class="stat-content">
+                    <h3><%= stats.emailsSent %></h3>
+                    <p>Email-uri trimise</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📧</div>
+                <div class="stat-content">
+                    <h3><%= stats.openRate %>%</h3>
+                    <p>Rată deschidere</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-content">
+                    <h3><%= stats.clickRate %>%</h3>
+                    <p>Rată click</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="report-sections">
+            <!-- Grafic status ținte -->
+            <section class="report-section">
+                <h2>Distribuția țintelor pe status</h2>
+                <div class="status-distribution">
+                    <div class="status-item">
+                        <span class="status status-pending">În așteptare</span>
+                        <span class="count"><%= targetsByStatus.pending.length %></span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status status-sent">Trimise</span>
+                        <span class="count"><%= targetsByStatus.sent.length %></span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status status-opened">Deschise</span>
+                        <span class="count"><%= targetsByStatus.opened.length %></span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status status-clicked">Click-uri</span>
+                        <span class="count"><%= targetsByStatus.clicked.length %></span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Timeline evenimente -->
+            <section class="report-section">
+                <h2>Timeline evenimente</h2>
+                <% if (events.length > 0) { %>
+                    <div class="events-timeline">
+                        <% events.forEach(event => { %>
+                            <div class="timeline-event">
+                                <div class="event-time">
+                                    <%= new Date(event.timestamp).toLocaleString('ro-RO') %>
+                                </div>
+                                <div class="event-content">
+                                    <span class="event-icon">
+                                        <%= event.event_type === 'open' ? '📧' : '🎯' %>
+                                    </span>
+                                    <span class="event-text">
+                                        <strong><%= event.email %></strong>
+                                        <%= event.event_type === 'open' ? 'a deschis email-ul' : 'a dat click pe link' %>
+                                    </span>
+                                </div>
+                                <div class="event-meta">
+                                    IP: <%= event.ip_address || 'Necunoscut' %><br>
+                                    User Agent: <%= event.user_agent ? event.user_agent.substring(0, 50) + '...' : 'Necunoscut' %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <p class="no-data">Nu există evenimente înregistrate încă</p>
+                <% } %>
+            </section>
+            
+            <!-- Informații campanie -->
+            <section class="report-section">
+                <h2>Detalii campanie</h2>
+                <div class="campaign-info">
+                    <div class="info-item">
+                        <strong>Status:</strong> 
+                        <span class="status status-<%= campaign.status %>"><%= campaign.status %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Creat la:</strong> 
+                        <%= new Date(campaign.created_at).toLocaleString('ro-RO') %>
+                    </div>
+                    <% if (campaign.launched_at) { %>
+                        <div class="info-item">
+                            <strong>Lansat la:</strong> 
+                            <%= new Date(campaign.launched_at).toLocaleString('ro-RO') %>
+                        </div>
+                    <% } %>
+                    <% if (campaign.description) { %>
+                        <div class="info-item">
+                            <strong>Descriere:</strong> 
+                            <%= campaign.description %>
+                        </div>
+                    <% } %>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+</body>
+</html>

@@ -28,6 +28,8 @@ const initDatabase = async () => {
             user_id INTEGER NOT NULL,
             name TEXT NOT NULL,
             description TEXT,
+            template_id INTEGER,
+            frequency INTEGER DEFAULT 30,
             status TEXT DEFAULT 'draft',
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             launched_at DATETIME,

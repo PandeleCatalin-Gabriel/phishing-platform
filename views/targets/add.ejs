@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaugă Țintă - Platformă Educațională Phishing</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Adaugă Țintă Nouă</h1>
+            <a href="/targets/campaign/<%= campaignId %>" class="btn btn-secondary">← Înapoi la listă</a>
+        </div>
+        
+        <div class="form-container">
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <form action="/targets/add" method="POST" class="target-form">
+                <input type="hidden" name="campaignId" value="<%= campaignId %>">
+                
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        placeholder="profesor@universitate.ro"
+                        autofocus
+                    >
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">Prenume</label>
+                        <input 
+                            type="text" 
+                            id="first_name" 
+                            name="first_name" 
+                            placeholder="Ion"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="last_name">Nume</label>
+                        <input 
+                            type="text" 
+                            id="last_name" 
+                            name="last_name" 
+                            placeholder="Popescu"
+                        >
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="position">Poziție</label>
+                        <input 
+                            type="text" 
+                            id="position" 
+                            name="position" 
+                            placeholder="Profesor"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Organizație</label>
+                        <input 
+                            type="text" 
+                            id="company" 
+                            name="company" 
+                            placeholder="Universitatea X"
+                        >
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        ➕ Adaugă Țintă
+                    </button>
+                    <button type="submit" name="addAnother" value="true" class="btn btn-secondary">
+                        ➕ Adaugă și Continuă
+                    </button>
+                </div>
+            </form>
+            
+            <div class="info-box">
+                <h3>💡 Sfaturi:</h3>
+                <ul>
+                    <li>Folosește nume reale pentru personalizare mai bună</li>
+                    <li>Email-ul este singurul câmp obligatoriu</li>
+                    <li>Datele vor fi folosite pentru a personaliza template-ul</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <style>
+        .target-form {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>

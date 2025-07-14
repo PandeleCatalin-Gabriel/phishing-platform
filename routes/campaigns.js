@@ -24,8 +24,13 @@ router.get('/:id/edit', campaignController.showEditForm);
 // Actualizare campanie
 router.post('/:id/edit', campaignController.updateCampaign);
 
+// Selector template
+router.get('/:id/select-template', campaignController.showTemplateSelector);
+
 // API endpoints
 router.post('/:id/launch', campaignController.launchCampaign);
+router.post('/:id/stop', campaignController.stopCampaign);
+router.post('/:id/set-template', campaignController.setTemplate);
 router.delete('/:id', campaignController.deleteCampaign);
 
 module.exports = router;

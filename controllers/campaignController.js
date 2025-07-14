@@ -1,5 +1,6 @@
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
+const { runQuery } = require('../config/database');
 
 // Afișare toate campaniile
 const listCampaigns = async (req, res) => {
@@ -166,7 +167,7 @@ const updateCampaign = async (req, res) => {
     }
 };
 
-// Lansare campanie
+// Lansare campanie cu frecvență
 const launchCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -183,11 +184,53 @@ const launchCampaign = async (req, res) => {
             return res.status(400).json({ error: 'Campania nu poate fi lansată' });
         }
 
-        await campaign.launch();
-        res.json({ success: true, message: 'Campanie lansată cu succes' });
+        // Verifică dacă are template și ținte
+        const stats = await campaign.getStats();
+        if (stats.totalTargets === 0) {
+            return res.status(400).json({ error: 'Adaugă ținte înainte de a lansa campania' });
+        }
+        
+        if (!campaign.template_id) {
+            return res.status(400).json({ error: 'Selectează un template înainte de a lansa campania' });
+        }
+
+        const frequency = req.body.frequency || 30;
+        
+        // Actualizează campania cu frecvența
+        await runQuery(
+            'UPDATE campaigns SET status = "active", launched_at = CURRENT_TIMESTAMP, frequency = ? WHERE id = ?',
+            [frequency, campaign.id]
+        );
+        
+        res.json({ success: true, message: `Campanie lansată! Email-urile vor fi trimise la fiecare ${frequency} minute.` });
     } catch (error) {
         console.error('Eroare la lansarea campaniei:', error);
         res.status(500).json({ error: 'Nu am putut lansa campania' });
+    }
+};
+
+// Oprire campanie
+const stopCampaign = async (req, res) => {
+    try {
+        const campaign = await Campaign.findById(req.params.id);
+        
+        if (!campaign) {
+            return res.status(404).json({ error: 'Campanie negăsită' });
+        }
+
+        if (campaign.user_id !== req.session.user.id) {
+            return res.status(403).json({ error: 'Acces interzis' });
+        }
+
+        if (campaign.status !== 'active') {
+            return res.status(400).json({ error: 'Campania nu este activă' });
+        }
+
+        await campaign.complete();
+        res.json({ success: true, message: 'Campanie oprită cu succes' });
+    } catch (error) {
+        console.error('Eroare la oprirea campaniei:', error);
+        res.status(500).json({ error: 'Nu am putut opri campania' });
     }
 };
 
@@ -212,6 +255,70 @@ const deleteCampaign = async (req, res) => {
     }
 };
 
+// Afișare selector de template
+const showTemplateSelector = async (req, res) => {
+    try {
+        const campaign = await Campaign.findById(req.params.id);
+        
+        if (!campaign) {
+            return res.status(404).render('404', {
+                title: 'Campanie negăsită'
+            });
+        }
+
+        if (campaign.user_id !== req.session.user.id) {
+            return res.status(403).render('error', {
+                title: 'Acces interzis',
+                message: 'Nu aveți permisiunea pentru această campanie'
+            });
+        }
+
+        res.render('templates/selector', {
+            title: 'Alege Template',
+            campaign
+        });
+    } catch (error) {
+        console.error('Eroare:', error);
+        res.redirect('/campaigns');
+    }
+};
+
+// Setare template pentru campanie
+const setTemplate = async (req, res) => {
+    try {
+        const campaign = await Campaign.findById(req.params.id);
+        
+        if (!campaign) {
+            return res.status(404).json({ error: 'Campanie negăsită' });
+        }
+
+        if (campaign.user_id !== req.session.user.id) {
+            return res.status(403).json({ error: 'Acces interzis' });
+        }
+
+        const { template } = req.body;
+        
+        // Mapare template la ID
+        const templateMap = {
+            'instagram': 1,
+            'facebook': 2,
+            'gmail': 3
+        };
+        
+        const templateId = templateMap[template] || 1;
+
+        await runQuery(
+            'UPDATE campaigns SET template_id = ? WHERE id = ?',
+            [templateId, campaign.id]
+        );
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Eroare la setarea template-ului:', error);
+        res.status(500).json({ error: 'Nu am putut seta template-ul' });
+    }
+};
+
 module.exports = {
     listCampaigns,
     showNewCampaignForm,
@@ -220,5 +327,8 @@ module.exports = {
     showEditForm,
     updateCampaign,
     launchCampaign,
+    stopCampaign,
+    showTemplateSelector,
+    setTemplate,
     deleteCampaign
 };
