@@ -2,18 +2,18 @@ const Campaign = require('../models/Campaign');
 const Target = require('../models/Target');
 const { getAll } = require('../config/database');
 
-// Dashboard rapoarte
+
 const showReports = async (req, res) => {
     try {
         const userId = req.session.user.id;
         
-        // Statistici generale
+        
         const campaigns = await Campaign.findByUserId(userId);
         const totalCampaigns = campaigns.length;
         const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
         const completedCampaigns = campaigns.filter(c => c.status === 'completed').length;
         
-        // Statistici ținte
+        
         let totalTargets = 0;
         let totalSent = 0;
         let totalOpened = 0;
@@ -27,11 +27,11 @@ const showReports = async (req, res) => {
             totalClicked += targets.filter(t => t.clicked_at).length;
         }
         
-        // Calculează rate
+       
         const openRate = totalSent > 0 ? Math.round((totalOpened / totalSent) * 100) : 0;
         const clickRate = totalSent > 0 ? Math.round((totalClicked / totalSent) * 100) : 0;
         
-        // Cele mai recente evenimente
+        
         const recentEvents = await getAll(`
             SELECT 
                 te.event_type,
@@ -46,7 +46,7 @@ const showReports = async (req, res) => {
             LIMIT 10
         `, [userId]);
         
-        // Performanța campaniilor
+       
         const campaignStats = [];
         for (const campaign of campaigns) {
             const stats = await campaign.getStats();
@@ -83,7 +83,7 @@ const showReports = async (req, res) => {
     }
 };
 
-// Raport detaliat campanie
+
 const campaignReport = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -104,7 +104,7 @@ const campaignReport = async (req, res) => {
         const stats = await campaign.getStats();
         const targets = await Target.findByCampaignId(campaign.id);
         
-        // Grupează țintele pe status
+        
         const targetsByStatus = {
             pending: targets.filter(t => t.status === 'pending'),
             sent: targets.filter(t => t.status === 'sent'),
@@ -112,7 +112,7 @@ const campaignReport = async (req, res) => {
             clicked: targets.filter(t => t.status === 'clicked')
         };
         
-        // Timeline evenimente
+        
         const events = await getAll(`
             SELECT 
                 te.*,

@@ -11,11 +11,11 @@ class User {
         this.last_login = data.last_login;
     }
 
-    // Creare utilizator nou
+   
     static async create(userData) {
         const { username, email, password, role = 'user' } = userData;
         
-        // Hash parolă
+      
         const hashedPassword = await bcrypt.hash(password, 10);
         
         const sql = `
@@ -34,33 +34,33 @@ class User {
         }
     }
 
-    // Găsește utilizator după ID
+    
     static async findById(id) {
         const sql = 'SELECT * FROM users WHERE id = ?';
         const userData = await getOne(sql, [id]);
         return userData ? new User(userData) : null;
     }
 
-    // Găsește utilizator după email
+    
     static async findByEmail(email) {
         const sql = 'SELECT * FROM users WHERE email = ?';
         const userData = await getOne(sql, [email]);
         return userData ? new User(userData) : null;
     }
 
-    // Găsește utilizator după username
+    
     static async findByUsername(username) {
         const sql = 'SELECT * FROM users WHERE username = ?';
         const userData = await getOne(sql, [username]);
         return userData ? new User(userData) : null;
     }
 
-    // Verifică parolă
+   
     static async verifyPassword(plainPassword, hashedPassword) {
         return await bcrypt.compare(plainPassword, hashedPassword);
     }
 
-    // Autentificare
+    
     static async authenticate(emailOrUsername, password) {
         const sql = `
             SELECT * FROM users 
@@ -79,7 +79,7 @@ class User {
             return { success: false, message: 'Parolă incorectă' };
         }
 
-        // Actualizează last_login
+        
         await runQuery(
             'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?',
             [userData.id]
@@ -91,7 +91,7 @@ class User {
         };
     }
 
-    // Actualizare profil
+   
     async update(updateData) {
         const allowedFields = ['username', 'email'];
         const updates = [];
@@ -115,7 +115,7 @@ class User {
         return true;
     }
 
-    // Schimbare parolă
+   
     async changePassword(currentPassword, newPassword) {
         const sql = 'SELECT password FROM users WHERE id = ?';
         const result = await getOne(sql, [this.id]);
@@ -134,7 +134,7 @@ class User {
         return true;
     }
 
-    // Obține toate campaniile utilizatorului
+    
     async getCampaigns() {
         const sql = `
             SELECT * FROM campaigns 
@@ -144,7 +144,7 @@ class User {
         return await getAll(sql, [this.id]);
     }
 
-    // Obține toate template-urile utilizatorului
+   
     async getTemplates() {
         const sql = `
             SELECT * FROM templates 
@@ -154,25 +154,25 @@ class User {
         return await getAll(sql, [this.id]);
     }
 
-    // Obține statistici utilizator
+    
     async getStats() {
         const stats = {};
         
-        // Număr campanii
+       
         const campaigns = await getOne(
             'SELECT COUNT(*) as count FROM campaigns WHERE user_id = ?',
             [this.id]
         );
         stats.totalCampaigns = campaigns.count;
 
-        // Număr template-uri
-        const templates = await getOne(
-            'SELECT COUNT(*) as count FROM templates WHERE user_id = ?',
-            [this.id]
-        );
-        stats.totalTemplates = templates.count;
+        
+       const templates = await getOne(
+    'SELECT COUNT(*) as count FROM templates WHERE user_id = ?',
+    [this.id]
+);
+stats.totalTemplates = templates.count;
 
-        // Număr email-uri trimise
+        
         const emails = await getOne(`
             SELECT COUNT(*) as count 
             FROM targets t

@@ -3,7 +3,7 @@ const path = require('path');
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, '../database/database.db');
 
-// Creare conexiune la baza de date
+
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Eroare la conectarea la baza de date:', err);
@@ -12,10 +12,10 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Activare foreign keys
+
 db.run('PRAGMA foreign_keys = ON');
 
-// Funcții helper pentru query-uri
+
 const runQuery = (sql, params = []) => {
     return new Promise((resolve, reject) => {
         db.run(sql, params, function(err) {

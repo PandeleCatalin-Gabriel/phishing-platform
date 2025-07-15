@@ -7,14 +7,14 @@ class Campaign {
         this.name = data.name;
         this.description = data.description;
         this.template_id = data.template_id;
-        this.frequency = data.frequency || 30; // minute
+        this.frequency = data.frequency || 30; 
         this.status = data.status || 'draft';
         this.created_at = data.created_at;
         this.launched_at = data.launched_at;
         this.completed_at = data.completed_at;
     }
 
-    // Creare campanie nouă
+    
     static async create(campaignData) {
         const { user_id, name, description } = campaignData;
         
@@ -27,14 +27,14 @@ class Campaign {
         return result.id;
     }
 
-    // Găsește campanie după ID
+   
     static async findById(id) {
         const sql = 'SELECT * FROM campaigns WHERE id = ?';
         const campaignData = await getOne(sql, [id]);
         return campaignData ? new Campaign(campaignData) : null;
     }
 
-    // Găsește toate campaniile unui utilizator
+   
     static async findByUserId(userId) {
         const sql = `
             SELECT * FROM campaigns 
@@ -45,7 +45,7 @@ class Campaign {
         return campaigns.map(c => new Campaign(c));
     }
 
-    // Actualizare campanie
+   
     async update(updateData) {
         const allowedFields = ['name', 'description', 'status'];
         const updates = [];
@@ -67,7 +67,7 @@ class Campaign {
         return true;
     }
 
-    // Lansare campanie
+   
     async launch() {
         const sql = `
             UPDATE campaigns 
@@ -79,7 +79,7 @@ class Campaign {
         this.launched_at = new Date();
     }
 
-    // Finalizare campanie
+  
     async complete() {
         const sql = `
             UPDATE campaigns 
@@ -91,45 +91,44 @@ class Campaign {
         this.completed_at = new Date();
     }
 
-    // Ștergere campanie
+
     async delete() {
         const sql = 'DELETE FROM campaigns WHERE id = ?';
         await runQuery(sql, [this.id]);
     }
 
-    // Obține statistici campanie
+    
     async getStats() {
         const stats = {};
         
-        // Total ținte
+       
         const targets = await getOne(
             'SELECT COUNT(*) as count FROM targets WHERE campaign_id = ?',
             [this.id]
         );
         stats.totalTargets = targets.count;
 
-        // Email-uri trimise
+     
         const sent = await getOne(
             'SELECT COUNT(*) as count FROM targets WHERE campaign_id = ? AND status = "sent"',
             [this.id]
         );
         stats.emailsSent = sent.count;
 
-        // Email-uri deschise
+     
         const opened = await getOne(
             'SELECT COUNT(*) as count FROM targets WHERE campaign_id = ? AND opened_at IS NOT NULL',
             [this.id]
         );
         stats.emailsOpened = opened.count;
 
-        // Click-uri
         const clicked = await getOne(
             'SELECT COUNT(*) as count FROM targets WHERE campaign_id = ? AND clicked_at IS NOT NULL',
             [this.id]
         );
         stats.linksClicked = clicked.count;
 
-        // Calculează rate
+      
         stats.openRate = stats.emailsSent > 0 
             ? Math.round((stats.emailsOpened / stats.emailsSent) * 100) 
             : 0;
@@ -141,12 +140,12 @@ class Campaign {
         return stats;
     }
 
-    // Verifică dacă utilizatorul poate edita campania
+    
     canBeEditedBy(userId) {
         return this.user_id === userId && this.status === 'draft';
     }
 
-    // Verifică dacă campania poate fi lansată
+    
     canBeLaunched() {
         return this.status === 'draft';
     }

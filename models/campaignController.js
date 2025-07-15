@@ -1,7 +1,7 @@
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
 
-// Afișare toate campaniile
+
 const listCampaigns = async (req, res) => {
     try {
         const campaigns = await Campaign.findByUserId(req.session.user.id);
@@ -19,7 +19,7 @@ const listCampaigns = async (req, res) => {
     }
 };
 
-// Afișare formular campanie nouă
+
 const showNewCampaignForm = (req, res) => {
     res.render('campaigns/new', {
         title: 'Campanie nouă',
@@ -27,11 +27,11 @@ const showNewCampaignForm = (req, res) => {
     });
 };
 
-// Creare campanie nouă
+
 const createCampaign = async (req, res) => {
     const { name, description } = req.body;
 
-    // Validări
+   
     if (!name || name.trim().length === 0) {
         return res.render('campaigns/new', {
             title: 'Campanie nouă',
@@ -56,7 +56,7 @@ const createCampaign = async (req, res) => {
     }
 };
 
-// Vizualizare detalii campanie
+
 const viewCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -91,7 +91,7 @@ const viewCampaign = async (req, res) => {
     }
 };
 
-// Afișare formular editare
+
 const showEditForm = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -123,7 +123,7 @@ const showEditForm = async (req, res) => {
     }
 };
 
-// Actualizare campanie
+
 const updateCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -166,7 +166,7 @@ const updateCampaign = async (req, res) => {
     }
 };
 
-// Lansare campanie
+
 const launchCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -191,7 +191,7 @@ const launchCampaign = async (req, res) => {
     }
 };
 
-// Ștergere campanie
+
 const deleteCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);

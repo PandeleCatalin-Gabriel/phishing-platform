@@ -2,7 +2,7 @@ const Campaign = require('../models/Campaign');
 const User = require('../models/User');
 const { runQuery } = require('../config/database');
 
-// Afișare toate campaniile
+
 const listCampaigns = async (req, res) => {
     try {
         const campaigns = await Campaign.findByUserId(req.session.user.id);
@@ -20,7 +20,7 @@ const listCampaigns = async (req, res) => {
     }
 };
 
-// Afișare formular campanie nouă
+
 const showNewCampaignForm = (req, res) => {
     res.render('campaigns/new', {
         title: 'Campanie nouă',
@@ -28,11 +28,11 @@ const showNewCampaignForm = (req, res) => {
     });
 };
 
-// Creare campanie nouă
+
 const createCampaign = async (req, res) => {
     const { name, description } = req.body;
 
-    // Validări
+  
     if (!name || name.trim().length === 0) {
         return res.render('campaigns/new', {
             title: 'Campanie nouă',
@@ -57,7 +57,7 @@ const createCampaign = async (req, res) => {
     }
 };
 
-// Vizualizare detalii campanie
+
 const viewCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -68,7 +68,7 @@ const viewCampaign = async (req, res) => {
             });
         }
 
-        // Verifică dacă utilizatorul are acces
+        
         if (campaign.user_id !== req.session.user.id) {
             return res.status(403).render('error', {
                 title: 'Acces interzis',
@@ -77,6 +77,14 @@ const viewCampaign = async (req, res) => {
         }
 
         const stats = await campaign.getStats();
+        if (campaign.template_id) {
+                const templateMap = {
+                 1: 'Instagram Login',
+                 2: 'Facebook Login', 
+                 3: 'Gmail Login'
+                     };
+                 campaign.template_name = templateMap[campaign.template_id] || 'Template necunoscut';
+                  }
 
         res.render('campaigns/view', {
             title: campaign.name,
@@ -92,7 +100,7 @@ const viewCampaign = async (req, res) => {
     }
 };
 
-// Afișare formular editare
+
 const showEditForm = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -124,7 +132,7 @@ const showEditForm = async (req, res) => {
     }
 };
 
-// Actualizare campanie
+
 const updateCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -167,7 +175,7 @@ const updateCampaign = async (req, res) => {
     }
 };
 
-// Lansare campanie cu frecvență
+
 const launchCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -184,7 +192,7 @@ const launchCampaign = async (req, res) => {
             return res.status(400).json({ error: 'Campania nu poate fi lansată' });
         }
 
-        // Verifică dacă are template și ținte
+        
         const stats = await campaign.getStats();
         if (stats.totalTargets === 0) {
             return res.status(400).json({ error: 'Adaugă ținte înainte de a lansa campania' });
@@ -196,7 +204,7 @@ const launchCampaign = async (req, res) => {
 
         const frequency = req.body.frequency || 30;
         
-        // Actualizează campania cu frecvența
+       
         await runQuery(
             'UPDATE campaigns SET status = "active", launched_at = CURRENT_TIMESTAMP, frequency = ? WHERE id = ?',
             [frequency, campaign.id]
@@ -209,7 +217,7 @@ const launchCampaign = async (req, res) => {
     }
 };
 
-// Oprire campanie
+
 const stopCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -234,7 +242,7 @@ const stopCampaign = async (req, res) => {
     }
 };
 
-// Ștergere campanie
+
 const deleteCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -255,7 +263,7 @@ const deleteCampaign = async (req, res) => {
     }
 };
 
-// Afișare selector de template
+
 const showTemplateSelector = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -283,7 +291,7 @@ const showTemplateSelector = async (req, res) => {
     }
 };
 
-// Setare template pentru campanie
+
 const setTemplate = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -298,7 +306,7 @@ const setTemplate = async (req, res) => {
 
         const { template } = req.body;
         
-        // Mapare template la ID
+        
         const templateMap = {
             'instagram': 1,
             'facebook': 2,

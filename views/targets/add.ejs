@@ -16,9 +16,15 @@
         </div>
         
         <div class="form-container">
-            <% if (error) { %>
+            <% if (locals.error) { %>
                 <div class="alert alert-error">
                     <%= error %>
+                </div>
+            <% } %>
+            
+            <% if (locals.success) { %>
+                <div class="alert alert-success">
+                    <%= success %>
                 </div>
             <% } %>
             
@@ -32,53 +38,10 @@
                         id="email" 
                         name="email" 
                         required
-                        placeholder="profesor@universitate.ro"
+                        placeholder="exemplu@email.com"
                         autofocus
                     >
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="first_name">Prenume</label>
-                        <input 
-                            type="text" 
-                            id="first_name" 
-                            name="first_name" 
-                            placeholder="Ion"
-                        >
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="last_name">Nume</label>
-                        <input 
-                            type="text" 
-                            id="last_name" 
-                            name="last_name" 
-                            placeholder="Popescu"
-                        >
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="position">Poziție</label>
-                        <input 
-                            type="text" 
-                            id="position" 
-                            name="position" 
-                            placeholder="Profesor"
-                        >
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="company">Organizație</label>
-                        <input 
-                            type="text" 
-                            id="company" 
-                            name="company" 
-                            placeholder="Universitatea X"
-                        >
-                    </div>
+                    <small class="form-help">Introduceți doar adresa de email a țintei</small>
                 </div>
                 
                 <div class="form-actions">
@@ -92,11 +55,11 @@
             </form>
             
             <div class="info-box">
-                <h3>💡 Sfaturi:</h3>
+                <h3>💡 Info:</h3>
                 <ul>
-                    <li>Folosește nume reale pentru personalizare mai bună</li>
-                    <li>Email-ul este singurul câmp obligatoriu</li>
-                    <li>Datele vor fi folosite pentru a personaliza template-ul</li>
+                    <li>Email-ul este singurul câmp necesar</li>
+                    <li>Țintele vor primi email-ul de phishing când lansați campania</li>
+                    <li>Veți putea vedea în raport cine a căzut în capcană</li>
                 </ul>
             </div>
         </div>
@@ -110,18 +73,8 @@
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            max-width: 500px;
+            margin: 0 auto;
         }
     </style>
 </body>

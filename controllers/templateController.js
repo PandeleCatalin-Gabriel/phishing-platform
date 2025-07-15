@@ -1,6 +1,6 @@
 const Template = require('../models/Template');
 
-// Template-uri predefinite
+
 const presetTemplates = {
     instagram: {
         name: 'Instagram Login',
@@ -138,7 +138,7 @@ const presetTemplates = {
     }
 };
 
-// Listare template-uri
+
 const listTemplates = async (req, res) => {
     try {
         const campaignId = req.query.campaign;
@@ -158,7 +158,7 @@ const listTemplates = async (req, res) => {
     }
 };
 
-// Afișare galerie template-uri predefinite
+
 const showGallery = (req, res) => {
     const campaignId = req.query.campaign;
     res.render('templates/gallery', {
@@ -167,7 +167,7 @@ const showGallery = (req, res) => {
     });
 };
 
-// Creare template din preset
+
 const createFromPreset = async (req, res) => {
     const { type, campaign } = req.query;
     const preset = presetTemplates[type];
@@ -186,7 +186,7 @@ const createFromPreset = async (req, res) => {
         });
         
         if (campaign) {
-            // Aici poți adăuga logica pentru a asocia template-ul cu campania
+            
             res.redirect(`/campaigns/${campaign}`);
         } else {
             res.redirect(`/templates/${templateId}`);
@@ -197,7 +197,7 @@ const createFromPreset = async (req, res) => {
     }
 };
 
-// Afișare formular template nou
+
 const showNewTemplateForm = (req, res) => {
     res.render('templates/new', {
         title: 'Template nou',
@@ -206,11 +206,11 @@ const showNewTemplateForm = (req, res) => {
     });
 };
 
-// Creare template nou
+
 const createTemplate = async (req, res) => {
     const { name, subject, html_content, text_content, campaignId } = req.body;
 
-    // Validări
+   
     if (!name || !subject || !html_content) {
         return res.render('templates/new', {
             title: 'Template nou',
@@ -243,7 +243,7 @@ const createTemplate = async (req, res) => {
     }
 };
 
-// Vizualizare template
+
 const viewTemplate = async (req, res) => {
     try {
         const template = await Template.findById(req.params.id);
@@ -254,7 +254,7 @@ const viewTemplate = async (req, res) => {
             });
         }
 
-        // Verifică dacă utilizatorul are acces
+       
         if (template.user_id !== req.session.user.id) {
             return res.status(403).render('error', {
                 title: 'Acces interzis',
@@ -275,7 +275,7 @@ const viewTemplate = async (req, res) => {
     }
 };
 
-// Afișare formular editare
+
 const showEditForm = async (req, res) => {
     try {
         const template = await Template.findById(req.params.id);
@@ -307,7 +307,7 @@ const showEditForm = async (req, res) => {
     }
 };
 
-// Actualizare template
+
 const updateTemplate = async (req, res) => {
     try {
         const template = await Template.findById(req.params.id);
@@ -352,7 +352,7 @@ const updateTemplate = async (req, res) => {
     }
 };
 
-// Ștergere template
+
 const deleteTemplate = async (req, res) => {
     try {
         const template = await Template.findById(req.params.id);
@@ -373,7 +373,7 @@ const deleteTemplate = async (req, res) => {
     }
 };
 
-// Preview template
+
 const previewTemplate = async (req, res) => {
     try {
         const template = await Template.findById(req.params.id);
@@ -386,7 +386,7 @@ const previewTemplate = async (req, res) => {
             return res.status(403).send('Acces interzis');
         }
 
-        // Trimite doar conținutul HTML pentru preview
+       
         res.send(template.html_content);
     } catch (error) {
         console.error('Eroare la preview template:', error);

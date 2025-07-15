@@ -2,7 +2,7 @@ const Target = require('../models/Target');
 const fs = require('fs').promises;
 const path = require('path');
 
-// Tracking pixel pentru deschidere email
+
 const trackOpen = async (req, res) => {
     try {
         const { trackingId } = req.params;
@@ -14,11 +14,11 @@ const trackOpen = async (req, res) => {
             
             await target.markAsOpened(ipAddress, userAgent);
             
-            // Log pentru webhook
+            
             console.log(`📧 Email deschis: ${target.email} la ${new Date().toISOString()}`);
         }
 
-        // Trimite un pixel transparent 1x1
+        
         const pixel = Buffer.from(
             'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
             'base64'
@@ -37,7 +37,7 @@ const trackOpen = async (req, res) => {
     }
 };
 
-// Tracking click pe link
+
 const trackClick = async (req, res) => {
     try {
         const { trackingId } = req.params;
@@ -51,15 +51,15 @@ const trackClick = async (req, res) => {
             
             await target.markAsClicked(ipAddress, userAgent);
             
-            // Log pentru webhook
+            
             console.log(`🎯 Link accesat: ${target.email} la ${new Date().toISOString()}`);
         }
 
-        // Redirect către URL-ul real sau o pagină de avertizare
+        
         if (url && isValidUrl(url)) {
             res.redirect(url);
         } else {
-            // Pagină de avertizare educațională
+            
             res.send(`
                 <!DOCTYPE html>
                 <html>
@@ -125,13 +125,12 @@ const trackClick = async (req, res) => {
     }
 };
 
-// Webhook endpoint pentru notificări
+
 const webhook = async (req, res) => {
     try {
         const { event, targetId, timestamp } = req.body;
         
-        // Aici poți implementa logica pentru notificări externe
-        // De exemplu: trimite la Slack, email, etc.
+        
         
         console.log(`🔔 Webhook: ${event} pentru target ${targetId} la ${timestamp}`);
         
@@ -142,7 +141,7 @@ const webhook = async (req, res) => {
     }
 };
 
-// Funcție helper pentru validare URL
+
 function isValidUrl(string) {
     try {
         new URL(string);

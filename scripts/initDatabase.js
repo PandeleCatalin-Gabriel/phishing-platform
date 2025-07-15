@@ -5,7 +5,7 @@ require('dotenv').config();
 const initDatabase = async () => {
     console.log('🔄 Inițializare bază de date...');
 
-    // Creare tabel utilizatori
+   
     db.run(`
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +21,7 @@ const initDatabase = async () => {
         else console.log('✅ Tabel users creat');
     });
 
-    // Creare tabel campanii
+   
     db.run(`
         CREATE TABLE IF NOT EXISTS campaigns (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,6 +34,7 @@ const initDatabase = async () => {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             launched_at DATETIME,
             completed_at DATETIME,
+            last_sent_at DATETIME,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     `, (err) => {
@@ -41,7 +42,7 @@ const initDatabase = async () => {
         else console.log('✅ Tabel campaigns creat');
     });
 
-    // Creare tabel template-uri
+   
     db.run(`
         CREATE TABLE IF NOT EXISTS templates (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +60,7 @@ const initDatabase = async () => {
         else console.log('✅ Tabel templates creat');
     });
 
-    // Creare tabel ținte
+   
     db.run(`
         CREATE TABLE IF NOT EXISTS targets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -82,26 +83,27 @@ const initDatabase = async () => {
         else console.log('✅ Tabel targets creat');
     });
 
-    // Creare tabel evenimente tracking
-    db.run(`
-        CREATE TABLE IF NOT EXISTS tracking_events (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            target_id INTEGER NOT NULL,
-            event_type TEXT NOT NULL,
-            ip_address TEXT,
-            user_agent TEXT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (target_id) REFERENCES targets(id) ON DELETE CASCADE
-        )
-    `, (err) => {
-        if (err) console.error('Eroare creare tabel tracking_events:', err);
-        else console.log('✅ Tabel tracking_events creat');
-    });
+    
+   db.run(`
+    CREATE TABLE IF NOT EXISTS tracking_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        target_id INTEGER NOT NULL,
+        event_type TEXT NOT NULL,
+        ip_address TEXT,
+        user_agent TEXT,
+        extra_data TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (target_id) REFERENCES targets(id) ON DELETE CASCADE
+    )
+`, (err) => {
+    if (err) console.error('Eroare creare tabel tracking_events:', err);
+    else console.log('✅ Tabel tracking_events creat');
+});
 
-    // Creare utilizator admin implicit
+  
     setTimeout(async () => {
         try {
-            // Verifică dacă există deja un admin
+          
             db.get('SELECT * FROM users WHERE email = ?', [process.env.ADMIN_EMAIL], async (err, row) => {
                 if (!row) {
                     const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
@@ -122,7 +124,7 @@ const initDatabase = async () => {
         }
     }, 1000);
 
-    // Închide conexiunea după 3 secunde
+   
     setTimeout(() => {
         db.close((err) => {
             if (err) console.error('Eroare la închiderea conexiunii:', err);

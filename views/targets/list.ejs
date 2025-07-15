@@ -13,7 +13,7 @@
         <div class="page-header">
             <h1>Ținte pentru: <%= campaign.name %></h1>
             <div class="header-actions">
-                <a href="/targets/add?campaign=<%= campaign.id %>" class="btn btn-primary">➕ Adaugă Țintă Nouă</a>
+                <a href="/targets/add?campaign=<%= campaign.id %>" class="btn btn-primary">➕ Adaugă Țintă</a>
                 <a href="/campaigns/<%= campaign.id %>" class="btn btn-secondary">← Înapoi la campanie</a>
             </div>
         </div>
@@ -29,12 +29,14 @@
                     <span class="stat-value"><%= targets.filter(t => t.sent_at).length %></span>
                 </div>
                 <div class="stat-mini">
-                    <span class="stat-label">Deschise:</span>
+                    <span class="stat-label">Au deschis:</span>
                     <span class="stat-value"><%= targets.filter(t => t.opened_at).length %></span>
                 </div>
                 <div class="stat-mini">
-                    <span class="stat-label">Click-uri:</span>
-                    <span class="stat-value"><%= targets.filter(t => t.clicked_at).length %></span>
+                    <span class="stat-label">🎣 Au fost păcăliți:</span>
+                    <span class="stat-value" style="color: #e74c3c; font-weight: bold;">
+                        <%= targets.filter(t => t.clicked_at).length %>
+                    </span>
                 </div>
             </div>
             
@@ -43,10 +45,8 @@
                     <thead>
                         <tr>
                             <th>Email</th>
-                            <th>Nume</th>
-                            <th>Poziție</th>
-                            <th>Companie</th>
                             <th>Status</th>
+                            <th>Rezultat</th>
                             <th>Acțiuni</th>
                         </tr>
                     </thead>
@@ -54,37 +54,62 @@
                         <% targets.forEach(target => { %>
                             <tr>
                                 <td><%= target.email %></td>
-                                <td><%= target.first_name %> <%= target.last_name %></td>
-                                <td><%= target.position || '-' %></td>
-                                <td><%= target.company || '-' %></td>
                                 <td>
                                     <span class="status status-<%= target.status %>">
                                         <% if (target.clicked_at) { %>
-                                            🎯 Click
+                                            🎣 A fost păcălit!
                                         <% } else if (target.opened_at) { %>
-                                            📧 Deschis
+                                            📧 A deschis email-ul
                                         <% } else if (target.sent_at) { %>
-                                            ✉️ Trimis
+                                            ✉️ Email trimis
                                         <% } else { %>
                                             ⏳ În așteptare
                                         <% } %>
                                     </span>
                                 </td>
                                 <td>
+                                    <% if (target.clicked_at) { %>
+                                        <span style="color: #e74c3c; font-weight: bold;">
+                                            ❌ VULNERABIL - necesită training
+                                        </span>
+                                    <% } else if (target.opened_at) { %>
+                                        <span style="color: #f39c12;">
+                                            ⚠️ A deschis dar nu a dat click
+                                        </span>
+                                    <% } else if (target.sent_at) { %>
+                                        <span style="color: #27ae60;">
+                                            ✅ Nu a interacționat
+                                        </span>
+                                    <% } else { %>
+                                        -
+                                    <% } %>
+                                </td>
+                                <td>
                                     <button onclick="removeTarget(<%= target.id %>)" class="btn btn-sm btn-danger">
-                                        🗑️
+                                        🗑️ Șterge
                                     </button>
                                 </td>
                             </tr>
                         <% }) %>
                     </tbody>
                 </table>
+                
+                <% const phishedCount = targets.filter(t => t.clicked_at).length; %>
+                <% if (phishedCount > 0) { %>
+                    <div class="phishing-summary" style="margin-top: 2rem; padding: 2rem; background: #fee2e2; border-radius: 8px;">
+                        <h3 style="color: #e74c3c;">⚠️ Rezultate îngrijorătoare!</h3>
+                        <p><strong><%= phishedCount %> din <%= targets.length %> persoane 
+                           (<%= Math.round((phishedCount / targets.length) * 100) %>%) 
+                           au căzut în capcana de phishing!</strong></p>
+                        <p>Aceste persoane necesită training suplimentar de securitate cibernetică.</p>
+                    </div>
+                <% } %>
             </div>
         <% } else { %>
             <div class="empty-state-large">
                 <div class="empty-icon">👥</div>
                 <h2>Nu există ținte pentru această campanie</h2>
-                <p>Adaugă ținte pentru a putea trimite email-uri</p>
+                <p>Adaugă email-uri pentru a putea testa awareness-ul de phishing</p>
                 <a href="/targets/add?campaign=<%= campaign.id %>" class="btn btn-primary">➕ Adaugă Prima Țintă</a>
             </div>
         <% } %>
@@ -122,34 +147,18 @@
             margin-bottom: 1rem;
         }
         
-        .stat-mini {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .phishing-summary {
+            text-align: center;
         }
         
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
+        .phishing-summary h3 {
+            margin-bottom: 1rem;
         }
         
-        .stat-value {
-            font-weight: 600;
-            font-size: 1.125rem;
-        }
-        
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-        
-        .btn-danger {
-            background: var(--danger-color);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #dc2626;
+        .status-clicked {
+            background: #fee2e2;
+            color: #e74c3c;
+            font-weight: bold;
         }
     </style>
 </body>

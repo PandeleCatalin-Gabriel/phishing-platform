@@ -34,7 +34,7 @@
             </div>
         </div>
         
-        <!-- Statistici campanie -->
+       
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">👥</div>
@@ -70,7 +70,7 @@
         </div>
         
         <div class="campaign-sections">
-            <!-- Secțiune Template -->
+           
             <section class="campaign-section">
                 <h2>Template Email</h2>
                 <% if (campaign.template_id) { %>
@@ -93,7 +93,7 @@
                 <% } %>
             </section>
             
-            <!-- Secțiune Ținte -->
+         
             <section class="campaign-section">
                 <h2>Listă destinatari</h2>
                 <% if (stats.totalTargets > 0) { %>
@@ -119,7 +119,7 @@
             </section>
         </div>
         
-        <!-- Timeline simplificat -->
+      
         <section class="timeline-section">
             <h2>Istoric activitate</h2>
             <div class="timeline">
@@ -154,7 +154,7 @@
         }
         
         function launchCampaign(id) {
-            // Prompt pentru frecvență
+            
             const frequency = prompt('La câte minute să se trimită email-urile?\n(Minim 1 minut, recomandat 30+ minute)', '30');
             
             if (!frequency) {

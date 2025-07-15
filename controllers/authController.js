@@ -1,6 +1,6 @@
 const User = require('../models/User');
 
-// Afișare pagină login
+
 const showLoginPage = (req, res) => {
     res.render('login', { 
         title: 'Autentificare',
@@ -8,7 +8,7 @@ const showLoginPage = (req, res) => {
     });
 };
 
-// Afișare pagină înregistrare
+
 const showRegisterPage = (req, res) => {
     res.render('register', { 
         title: 'Înregistrare',
@@ -16,7 +16,7 @@ const showRegisterPage = (req, res) => {
     });
 };
 
-// Procesare login
+
 const login = async (req, res) => {
     const { emailOrUsername, password } = req.body;
 
@@ -30,7 +30,7 @@ const login = async (req, res) => {
             });
         }
 
-        // Salvează utilizatorul în sesiune
+        
         req.session.user = {
             id: result.user.id,
             username: result.user.username,
@@ -48,7 +48,7 @@ const login = async (req, res) => {
     }
 };
 
-// Procesare înregistrare
+
 const register = async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
 
@@ -81,7 +81,7 @@ const register = async (req, res) => {
             password
         });
 
-        // Auto-login după înregistrare
+       
         const user = await User.findById(userId);
         req.session.user = {
             id: user.id,
@@ -100,7 +100,7 @@ const register = async (req, res) => {
     }
 };
 
-// Logout
+
 const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {

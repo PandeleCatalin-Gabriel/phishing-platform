@@ -12,7 +12,7 @@ class Template {
         this.updated_at = data.updated_at;
     }
 
-    // Creare template nou
+  
     static async create(templateData) {
         const { user_id, name, subject, html_content, text_content } = templateData;
         
@@ -25,14 +25,14 @@ class Template {
         return result.id;
     }
 
-    // Găsește template după ID
+  
     static async findById(id) {
         const sql = 'SELECT * FROM templates WHERE id = ?';
         const templateData = await getOne(sql, [id]);
         return templateData ? new Template(templateData) : null;
     }
 
-    // Găsește toate template-urile unui utilizator
+   
     static async findByUserId(userId) {
         const sql = `
             SELECT * FROM templates 
@@ -43,7 +43,7 @@ class Template {
         return templates.map(t => new Template(t));
     }
 
-    // Actualizare template
+   
     async update(updateData) {
         const allowedFields = ['name', 'subject', 'html_content', 'text_content'];
         const updates = [];
@@ -66,13 +66,13 @@ class Template {
         return true;
     }
 
-    // Ștergere template
+   
     async delete() {
         const sql = 'DELETE FROM templates WHERE id = ?';
         await runQuery(sql, [this.id]);
     }
 
-    // Clonare template
+   
     async clone(newName) {
         const sql = `
             INSERT INTO templates (user_id, name, subject, html_content, text_content)
@@ -90,13 +90,13 @@ class Template {
         return result.id;
     }
 
-    // Înlocuire variabile în template
+   
     renderWithVariables(variables) {
         let htmlContent = this.html_content;
         let textContent = this.text_content;
         let subject = this.subject;
 
-        // Înlocuiește variabilele de forma {{variabila}}
+        
         Object.keys(variables).forEach(key => {
             const regex = new RegExp(`{{${key}}}`, 'g');
             const value = variables[key] || '';

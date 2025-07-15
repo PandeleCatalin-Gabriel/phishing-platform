@@ -1,7 +1,7 @@
-// JavaScript principal pentru interfața utilizator
+
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Evidențiază link-ul activ în meniu
+    
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('.nav-link');
     
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Auto-hide pentru alerte
+    
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
     
-    // Confirmare pentru acțiuni periculoase
+    
     const dangerousActions = document.querySelectorAll('[data-confirm]');
     dangerousActions.forEach(element => {
         element.addEventListener('click', function(e) {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Validare formular înregistrare
+   
     const registerForm = document.querySelector('form[action="/auth/register"]');
     if (registerForm) {
         registerForm.addEventListener('submit', function(e) {
@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Funcții helper pentru viitoare funcționalități AJAX
+
 const api = {
-    // Funcție generică pentru request-uri
+    
     request: async (url, options = {}) => {
         const defaultOptions = {
             headers: {
@@ -67,26 +67,25 @@ const api = {
         return await response.json();
     },
     
-    // GET request
+
     get: (url) => api.request(url),
     
-    // POST request
     post: (url, data) => api.request(url, {
         method: 'POST',
         body: JSON.stringify(data)
     }),
     
-    // PUT request
+  
     put: (url, data) => api.request(url, {
         method: 'PUT',
         body: JSON.stringify(data)
     }),
     
-    // DELETE request
+
     delete: (url) => api.request(url, {
         method: 'DELETE'
     })
 };
 
-// Export pentru utilizare în alte scripturi
+
 window.phishingPlatform = { api };

@@ -18,7 +18,7 @@ class Target {
         this.tracking_id = data.tracking_id;
     }
 
-    // Creare țintă nouă
+    
     static async create(targetData) {
         const {
             campaign_id,
@@ -54,7 +54,7 @@ class Target {
         return result.id;
     }
 
-    // Import în masă
+   
     static async bulkCreate(campaignId, targets) {
         const results = [];
         
@@ -77,21 +77,21 @@ class Target {
         return results;
     }
 
-    // Găsește după ID
+  
     static async findById(id) {
         const sql = 'SELECT * FROM targets WHERE id = ?';
         const targetData = await getOne(sql, [id]);
         return targetData ? new Target(targetData) : null;
     }
 
-    // Găsește după tracking ID
+   
     static async findByTrackingId(trackingId) {
         const sql = 'SELECT * FROM targets WHERE tracking_id = ?';
         const targetData = await getOne(sql, [trackingId]);
         return targetData ? new Target(targetData) : null;
     }
 
-    // Găsește toate țintele unei campanii
+   
     static async findByCampaignId(campaignId) {
         const sql = `
             SELECT * FROM targets 
@@ -102,7 +102,7 @@ class Target {
         return targets.map(t => new Target(t));
     }
 
-    // Marchează ca trimis
+ 
     async markAsSent() {
         const sql = `
             UPDATE targets 
@@ -114,7 +114,7 @@ class Target {
         this.sent_at = new Date();
     }
 
-    // Marchează ca deschis
+ 
     async markAsOpened(ipAddress, userAgent) {
         if (!this.opened_at) {
             const sql = `
@@ -126,12 +126,12 @@ class Target {
             this.status = 'opened';
             this.opened_at = new Date();
 
-            // Înregistrează evenimentul
+         
             await this.logEvent('open', ipAddress, userAgent);
         }
     }
 
-    // Marchează ca clicked
+  
     async markAsClicked(ipAddress, userAgent) {
         if (!this.clicked_at) {
             const sql = `
@@ -144,16 +144,16 @@ class Target {
             this.clicked_at = new Date();
         }
 
-        // Marchează și ca deschis dacă nu era
+       
         if (!this.opened_at) {
             await this.markAsOpened(ipAddress, userAgent);
         }
 
-        // Înregistrează evenimentul
+    
         await this.logEvent('click', ipAddress, userAgent);
     }
 
-    // Înregistrează eveniment
+ 
     async logEvent(eventType, ipAddress, userAgent) {
         const sql = `
             INSERT INTO tracking_events (target_id, event_type, ip_address, user_agent)
@@ -163,7 +163,7 @@ class Target {
         await runQuery(sql, [this.id, eventType, ipAddress || '', userAgent || '']);
     }
 
-    // Obține toate evenimentele
+   
     async getEvents() {
         const sql = `
             SELECT * FROM tracking_events 
@@ -173,12 +173,12 @@ class Target {
         return await getAll(sql, [this.id]);
     }
 
-    // Generează link personalizat
+ 
     generateTrackingLink(baseUrl) {
         return `${baseUrl}/track/click/${this.tracking_id}`;
     }
 
-    // Generează pixel de tracking
+ 
     generateTrackingPixel(baseUrl) {
         return `${baseUrl}/track/open/${this.tracking_id}`;
     }

@@ -2,7 +2,7 @@ const Target = require('../models/Target');
 const Campaign = require('../models/Campaign');
 const { runQuery } = require('../config/database');
 
-// Afișare formular adăugare țintă
+
 const showAddForm = async (req, res) => {
     const campaignId = req.query.campaign;
     
@@ -31,12 +31,12 @@ const showAddForm = async (req, res) => {
     }
 };
 
-// Adaugă țintă nouă
+
 const addTarget = async (req, res) => {
-    const { campaignId, email, first_name, last_name, position, company, addAnother } = req.body;
+    const { campaignId, email, addAnother } = req.body;
     
     try {
-        // Verifică campania
+       
         const campaign = await Campaign.findById(campaignId);
         
         if (!campaign || campaign.user_id !== req.session.user.id) {
@@ -46,14 +46,14 @@ const addTarget = async (req, res) => {
             });
         }
         
-        // Creează ținta
+        
         await Target.create({
             campaign_id: campaignId,
             email: email.trim(),
-            first_name: first_name?.trim() || '',
-            last_name: last_name?.trim() || '',
-            position: position?.trim() || '',
-            company: company?.trim() || ''
+            first_name: '',
+            last_name: '',
+            position: '',
+            company: ''
         });
         
         if (addAnother) {
@@ -71,12 +71,12 @@ const addTarget = async (req, res) => {
         res.render('targets/add', {
             title: 'Adaugă Țintă',
             campaignId,
-            error: 'Email-ul există deja sau a apărut o eroare'
+            error: 'Email-ul există deja în această campanie'
         });
     }
 };
 
-// Listare ținte pentru o campanie
+
 const listTargets = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.campaignId);
@@ -110,7 +110,7 @@ const listTargets = async (req, res) => {
     }
 };
 
-// Ștergere țintă
+
 const deleteTarget = async (req, res) => {
     try {
         const target = await Target.findById(req.params.id);
@@ -119,7 +119,7 @@ const deleteTarget = async (req, res) => {
             return res.status(404).json({ error: 'Țintă negăsită' });
         }
         
-        // Verifică dacă utilizatorul are acces
+       
         const campaign = await Campaign.findById(target.campaign_id);
         if (!campaign || campaign.user_id !== req.session.user.id) {
             return res.status(403).json({ error: 'Acces interzis' });
@@ -133,13 +133,17 @@ const deleteTarget = async (req, res) => {
     }
 };
 
-// Pagină temporară pentru import
+
 const showImportPage = (req, res) => {
     const campaignId = req.query.campaign;
-    res.redirect(`/targets/add?campaign=${campaignId}`);
+    if (campaignId) {
+        res.redirect(`/targets/add?campaign=${campaignId}`);
+    } else {
+        res.redirect('/campaigns');
+    }
 };
 
-// Import fictiv
+// Import placeholder
 const importTargets = (req, res) => {
     const campaignId = req.body.campaignId || req.query.campaign;
     res.redirect(`/targets/add?campaign=${campaignId}`);
@@ -152,5 +156,5 @@ module.exports = {
     deleteTarget,
     showImportPage,
     importTargets,
-    upload: (req, res, next) => next() // Placeholder pentru multer
+    upload: (req, res, next) => next() 
 };

@@ -9,7 +9,7 @@ const showDashboard = async (req, res) => {
         res.render('dashboard', {
             title: 'Dashboard',
             stats,
-            recentCampaigns: recentCampaigns.slice(0, 5) // Ultimele 5 campanii
+            recentCampaigns: recentCampaigns.slice(0, 5) 
         });
     } catch (error) {
         console.error('Eroare la încărcarea dashboard-ului:', error);
